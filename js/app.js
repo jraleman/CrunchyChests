@@ -11,6 +11,10 @@ const tileColors = [
     'blue',
 ];
 
+let colorBeingDragged;
+let colorBeingReplaced;
+let squareIdBeingDragged;
+
 const createBoard = () => {
     for (let i = 0; i < (width * width); i += 1) {
         const square = document.createElement('div');
@@ -25,28 +29,42 @@ const createBoard = () => {
     }
 };
 
-const dragStart = () => {
-    console.log(this.id, 'dragStart');
+const dragStart = (e) => {
+    const { target: { id, style: { backgroundColor } } } = e;
+    console.log(id, 'dragStart');
+    colorBeingDragged = backgroundColor;
+    squareIdBeingDragged = parseInt(id, 10);
 };
 
-const dragEnd = () => {
-    console.log(this.id, 'dragEnd');
+const dragEnd = (e) => {
+    const { target: { id, style: { backgroundColor } } } = e;
+    console.log(id, 'dragEnd');
 };
 
-const dragOver = () => {
-    console.log(this.id, 'dragOver');
+const dragOver = (e) => {
+    const { target: { id, style: { backgroundColor } } } = e;
+    e.preventDefault();
+    console.log(id, 'dragOver');
 };
 
-const dragEnter = () => {
-    console.log(this.id, 'dragEnter');
+const dragEnter = (e) => {
+    const { target: { id, style: { backgroundColor } } } = e;
+    e.preventDefault();
+    console.log(id, 'dragEnter');
 };
 
-const dragLeave = () => {
-    console.log(this.id, 'dragLeave');
+const dragLeave = (e) => {
+    const { target: { id, style: { backgroundColor } } } = e;
+    console.log(id, 'dragLeave');
 };
 
-const dragDrop = () => {
-    console.log(this.id, 'dragDrop');
+const dragDrop = (e) => {
+    const { target: { id, style: { backgroundColor } } } = e;
+    colorBeingReplaced = backgroundColor;
+    squareIdBeingReplaced = parseInt(id, 10);
+    squares[id].style.backgroundColor = colorBeingDragged;
+    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced; 
+    console.log(id, 'dragDrop');
 };
 
 const addListeners = () => {
