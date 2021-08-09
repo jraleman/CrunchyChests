@@ -13,8 +13,6 @@ const bgColors = [
     '#42b284',
 ];
 
-// get from path instead
-// dont rely on using background-image in divs
 const tilesImages = [
     'url(images/red.png)',
     'url(images/dark.png)',
@@ -24,29 +22,36 @@ const tilesImages = [
     'url(images/blue.png)',
 ];
 
-// see if we can remove some global variables?
 let score = 0;
-let colorBeingDragged;
-let colorBeingReplaced;
-let squareIdBeingDragged;
+let tileBeingDragged;
+let tileBeingReplaced;
+let tileIdBeingDragged;
 
 const createBoard = () => {
     const totalGrids = (width * width);
     for (let i = 0; i < totalGrids; i += 1) {
-        // make this a function - const createTile = () > {}
         const square = document.createElement('div');
-        // see how to do children;
-        // const img = document.createElement('div > img');
-        // support for > .img
         const randomColor = Math.floor(Math.random() * tilesImages.length);
         square.style.backgroundImage = tilesImages[randomColor];
-        
-        // abstract this
         square.setAttribute('draggable', true);
         square.setAttribute('id', i);
         grid.appendChild(square);
-
         squares.push(square);
+    }
+};
+
+const highlightTiles = (opacity = 1) => {
+    const validMoves = [
+        tileIdBeingDragged - 1,
+        tileIdBeingDragged - width,
+        tileIdBeingDragged + 1,
+        tileIdBeingDragged + width,
+    ];
+    for (let i = 0; i < validMoves.length; i += 1) {
+        if (!squares[validMoves[i]] || squares[validMoves[i]].style.opacity > 0.5) {
+            continue;
+        }
+        squares[validMoves[i]].style.opacity = opacity;
     }
 };
 
@@ -55,28 +60,30 @@ const createBoard = () => {
 const dragStart = (e) => {
     const { target: { id, style: { backgroundImage } }} = e;
     console.debug(id, 'dragStart');
-    colorBeingDragged = backgroundImage;
-    squareIdBeingDragged = parseInt(id, 10);
+    tileBeingDragged = backgroundImage;
+    tileIdBeingDragged = parseInt(id, 10);
+    highlightTiles(0.25);
 };
 
 const dragEnd = (e) => {
-    const { target: { id, style: { backgroundImage } } } = e;
+    const { target: { id }} = e;
     const validMoves = [
-        squareIdBeingDragged - 1,
-        squareIdBeingDragged - width,
-        squareIdBeingDragged + 1,
-        squareIdBeingDragged + width,
+        tileIdBeingDragged - 1,
+        tileIdBeingDragged - width,
+        tileIdBeingDragged + 1,
+        tileIdBeingDragged + width,
     ];
     const isValid = validMoves.includes(squareIdBeingReplaced);
 
     if (squareIdBeingReplaced && isValid) {
         squareIdBeingReplaced = null;
     } else if (squareIdBeingReplaced && !isValid) {
-        squares[squareIdBeingReplaced].style.backgroundImage = colorBeingReplaced;
-        squares[squareIdBeingDragged].style.backgroundImage = colorBeingDragged;
+        squares[squareIdBeingReplaced].style.backgroundImage = tileBeingReplaced;
+        squares[tileIdBeingDragged].style.backgroundImage = tileBeingDragged;
     } else {
-        squares[squareIdBeingDragged].style.backgroundImage = colorBeingDragged;
+        squares[tileIdBeingDragged].style.backgroundImage = tileBeingDragged;
     }
+    highlightTiles(0.5);
     title.style.opacity = 0.85;
     document.body.style.opacity = 1.0;
     console.debug(id, 'dragEnd');
@@ -87,15 +94,13 @@ const dragOver = (e) => {
     const randomColor = Math.floor(Math.random() * tilesImages.length);
     const color = bgColors[randomColor]
     grid.style.border = `${color} solid thick`;
-    // border: grey solid thick;
     title.style.opacity = 0.5;
-    document.body.style.opacity = 0.5;
+    document.body.style.opacity = 0.85;
     e.preventDefault();
     console.debug(id, 'dragOver');
 };
 
 const dragEnter = (e) => {
-    // e.preventDefault();
     const { target: { id }} = e;
     const randomColor = Math.floor(Math.random() * bgColors.length);
     const color = bgColors[randomColor]
@@ -103,13 +108,9 @@ const dragEnter = (e) => {
     console.debug(id, 'dragEnter');
 };
 
-// we can change background color?
 const dragLeave = (e) => {
-    // e.preventDefault();
     const { target: { id } } = e;
 
-    // document.body.style.backgroundColor
-    // const color = rgbaCalculator(bgColors[squareIdBeingDragged]);
     document.body.style.backgroundColor = 'rgba(0,0,0,0)';
     grid.style.border = 'grey solid thick';
     console.debug(id, 'dragLeave');
@@ -117,10 +118,10 @@ const dragLeave = (e) => {
 
 const dragDrop = (e) => {
     const { target: { id, style: { backgroundImage } } } = e;
-    colorBeingReplaced = backgroundImage;
+    tileBeingReplaced = backgroundImage;
     squareIdBeingReplaced = parseInt(id, 10);
-    squares[squareIdBeingReplaced].style.backgroundImage = colorBeingDragged;
-    squares[squareIdBeingDragged].style.backgroundImage = colorBeingReplaced; 
+    squares[squareIdBeingReplaced].style.backgroundImage = tileBeingDragged;
+    squares[tileIdBeingDragged].style.backgroundImage = tileBeingReplaced; 
     console.debug(id, 'dragDrop');
 };
 
@@ -139,21 +140,22 @@ const checkRowForThree = () => {
     const checkRow = (width * width) - 3;
     for (let i = 0; i < checkRow; i += 1) {
         const rowOfThree = [i, i + 1, i + 2];
-        const decidedColor = squares[i].style.backgroundImage;
-        const isBlank = decidedColor === '';
-        const colorMatch = rowOfThree.every((idx) => 
-            (squares[idx].style.backgroundImage === decidedColor && !isBlank));
+        const decidedTile = squares[i].style.backgroundImage;
+        const isBlank = decidedTile === '';
+        const tileMatch = rowOfThree.every((idx) => 
+            (squares[idx].style.backgroundImage === decidedTile && !isBlank));
 
         const notValid = [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55];
         if (notValid.includes(i)) {
             continue;
         }
 
-        if (colorMatch) {
+        if (tileMatch) {
             score += 3;
             displayScore.innerHTML = `${score} 🗝`;
             rowOfThree.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
+                squares[idx].style.opacity = 1;
             });
         }
     }
@@ -163,21 +165,22 @@ const checkRowForFour = () => {
     const checkRow = (width * width) - 4;
     for (let i = 0; i < checkRow; i += 1) {
         const rowOfFour = [i, i + 1, i + 2, i + 3];
-        const decidedColor = squares[i].style.backgroundImage;
-        const isBlank = decidedColor === '';
-        const colorMatch = rowOfFour.every((idx) => 
-            (squares[idx].style.backgroundImage === decidedColor && !isBlank));
+        const decidedTile = squares[i].style.backgroundImage;
+        const isBlank = decidedTile === '';
+        const tileMatch = rowOfFour.every((idx) => 
+            (squares[idx].style.backgroundImage === decidedTile && !isBlank));
 
         const notValid = [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55];
         if (notValid.includes(i)) {
             continue;
         }
 
-        if (colorMatch) {
+        if (tileMatch) {
             score += 4;
             displayScore.innerHTML = `${score} 🗝`;
-            rowOfFour.forEach(idx => {
+            rowOfFour.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
+                squares[idx].style.opacity = 1;
             });
         }
     }
@@ -187,15 +190,16 @@ const checkColForThree = () => {
     const checkCol = (width * width) - (width * 2) - 1;
     for (let i = 0; i < checkCol; i += 1) {
         const colOfThree = [i, i + width, i + (width * 2)];
-        const decidedColor = squares[i].style.backgroundImage;
-        const isBlank = decidedColor === '';
-        const colorMatch = colOfThree.every(idx => squares[idx].style.backgroundImage === decidedColor && !isBlank);
+        const decidedTile = squares[i].style.backgroundImage;
+        const isBlank = decidedTile === '';
+        const tileMatch = colOfThree.every((idx) => squares[idx].style.backgroundImage === decidedTile && !isBlank);
 
-        if (colorMatch) {
+        if (tileMatch) {
             score += 3;
             displayScore.innerHTML = `${score} 🗝`;
-            colOfThree.forEach(idx => {
+            colOfThree.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
+                squares[idx].style.opacity = 1;
             });
         }
     }
@@ -205,23 +209,24 @@ const checkColForFour = () => {
     const checkCol = (width * width) - (width * 2) - 1;
     for (let i = 0; i < checkCol; i += 1) {
         const colOfFour = [i, i + width, i + (width * 2), i + (width * 3)];
-        const decidedColor = squares[i].style.backgroundImage;
-        const isBlank = decidedColor === '';
-        const colorMatch = colOfFour.every(idx => squares[idx].style.backgroundImage === decidedColor && !isBlank);
+        const decidedTile = squares[i].style.backgroundImage;
+        const isBlank = decidedTile === '';
+        const tileMatch = colOfFour.every((idx) => squares[idx].style.backgroundImage === decidedTile && !isBlank);
 
-        if (colorMatch) {
+        if (tileMatch) {
             score += 4;
             displayScore.innerHTML = `${score} 🗝`;
-            colOfFour.forEach(idx => {
+            colOfFour.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
+                squares[idx].style.opacity = 1;
             });
         }
     }
 };
 
 const moveDownTiles = () => {
-    // why 55?
-    for (let i = 0; i < 55; i += 1) {
+    const moveDown = (width * width) - 9; // 55
+    for (let i = 0; i < moveDown; i += 1) {
         if (squares[i + width].style.backgroundImage === '') {
             squares[i + width].style.backgroundImage = squares[i].style.backgroundImage;
             squares[i].style.backgroundImage = '';
@@ -259,8 +264,6 @@ const setup = () => {
 const runFrame = () => {
     try {
         moveDownTiles();
-        // go from bigger to smaller, we can refactor this into a single function
-        // and go from 2 to max-width/height - 1
         checkRowForThree();
         checkColForThree();
         checkRowForFour();
@@ -272,11 +275,6 @@ const runFrame = () => {
     return true;
 };
 
-const getFrameRate = () => {
-    // implement for LOW, HIGH, MID, options...
-    return 100;
-};
-
 const runGame = () => {
     const run = () => runFrame();
 
@@ -284,11 +282,11 @@ const runGame = () => {
         console.debug('Failed to run game!');
         return ;
     }
-    const frameRate = getFrameRate();
+    const cycleTime = 100;
 
     setInterval(() => {
         run();
-    }, frameRate);
+    }, cycleTime);
     return true;
 };
 
@@ -297,8 +295,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!isSetup) {
         console.debug('Failed to initialize game!');
-        // delete stuffs here!
-        // make deletion funcs, deleteBoard, removeListeners, unconfig
         return ;
     }
     runGame();

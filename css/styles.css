@@ -43,4 +43,5 @@ h2 {
     border: white solid 1px;
     border-radius: 2em;
     background-color: white;
+    opacity: 0.5;
 }
