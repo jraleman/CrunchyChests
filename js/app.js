@@ -1,6 +1,7 @@
 const grid = document.querySelector('.grid');
 const width = 8;
 const squares = [];
+const displayScore = document.getElementById('score');
 
 const tileColors = [
     'red',
@@ -11,6 +12,7 @@ const tileColors = [
     'blue',
 ];
 
+// see if we can remove some global variables?
 let score = 0;
 let colorBeingDragged;
 let colorBeingReplaced;
@@ -114,6 +116,7 @@ const checkRowForThree = () => {
 
         if (colorMatch) {
             score += 3;
+            displayScore.innerHTML = score;
             rowOfThree.forEach((idx) => {
                 squares[idx].style.backgroundColor = '';
             });
@@ -137,6 +140,7 @@ const checkRowForFour = () => {
 
         if (colorMatch) {
             score += 4;
+            displayScore.innerHTML = score;
             rowOfFour.forEach(idx => {
                 squares[idx].style.backgroundColor = '';
             });
@@ -154,6 +158,7 @@ const checkColForThree = () => {
 
         if (colorMatch) {
             score += 3;
+            displayScore.innerHTML = score;
             colOfThree.forEach(idx => {
                 squares[idx].style.backgroundColor = '';
             });
@@ -171,9 +176,27 @@ const checkColForFour = () => {
 
         if (colorMatch) {
             score += 4;
+            displayScore.innerHTML = score;
             colOfFour.forEach(idx => {
                 squares[idx].style.backgroundColor = '';
             });
+        }
+    }
+};
+
+const moveDownTiles = () => {
+    // why 55?
+    for (let i = 0; i < 55; i += 1) {
+        if (squares[i + width].style.backgroundColor === '') {
+            squares[i + width].style.backgroundColor = squares[i].style.backgroundColor;
+            squares[i].style.backgroundColor = '';
+        }
+
+        const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
+        const isFirstRow = firstRow.includes(i);
+        if (isFirstRow && squares[i].style.backgroundColor === '') {
+            let randomColor = Math.floor(Math.random() * tileColors.length);
+            squares[i].style.backgroundColor = tileColors[randomColor]
         }
     }
 };
@@ -183,14 +206,15 @@ const checkColForFour = () => {
 document.addEventListener('DOMContentLoaded', () => {
     createBoard();
     
-    checkRowForThree();
-    checkColForThree();
-    checkRowForFour();
-    checkColForFour();
+    // checkRowForThree();
+    // checkColForThree();
+    // checkRowForFour();
+    // checkColForFour();
 
     addListeners();
 
     setInterval(() => {
+        moveDownTiles();
         checkRowForThree();
         checkColForThree();
         checkRowForFour();
