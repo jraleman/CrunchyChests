@@ -1,9 +1,11 @@
-const grid = document.querySelector('.grid');
 const width = 8;
 const squares = [];
+const grid = document.querySelector('.grid');
 const displayScore = document.getElementById('score');
 
-const tileColors = [
+// get from path instead
+// dont rely on using background-image in divs
+const tilesImages = [
     'url(images/red.png)',
     'url(images/dark.png)',
     'url(images/green.png)',
@@ -21,10 +23,15 @@ let squareIdBeingDragged;
 const createBoard = () => {
     const totalGrids = (width * width);
     for (let i = 0; i < totalGrids; i += 1) {
+        // make this a function - const createTile = () > {}
         const square = document.createElement('div');
-        const randomColor = Math.floor(Math.random() * tileColors.length);
-
-        square.style.backgroundImage = tileColors[randomColor];
+        // see how to do children;
+        // const img = document.createElement('div > img');
+        // support for > .img
+        const randomColor = Math.floor(Math.random() * tilesImages.length);
+        square.style.backgroundImage = tilesImages[randomColor];
+        
+        // abstract this
         square.setAttribute('draggable', true);
         square.setAttribute('id', i);
         grid.appendChild(square);
@@ -195,22 +202,74 @@ const moveDownTiles = () => {
         const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
         const isFirstRow = firstRow.includes(i);
         if (isFirstRow && squares[i].style.backgroundImage === '') {
-            let randomColor = Math.floor(Math.random() * tileColors.length);
-            squares[i].style.backgroundImage = tileColors[randomColor]
+            let randomColor = Math.floor(Math.random() * tilesImages.length);
+            squares[i].style.backgroundImage = tilesImages[randomColor]
         }
     }
 };
 
 // ------------------------------------------------------
+// app.js
 
-document.addEventListener('DOMContentLoaded', () => {
-    createBoard();
-    addListeners();
-    setInterval(() => {
+const config = () => {
+    let scaleAmount = 0.80;
+    document.body.style.transform = `scale(${scaleAmount})`
+};
+
+const setup = () => {
+    try {
+        createBoard();
+        addListeners();
+        config();
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+    return true;
+};
+
+const runFrame = () => {
+    try {
         moveDownTiles();
         checkRowForThree();
         checkColForThree();
         checkRowForFour();
         checkColForFour();
-    }, 100);
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+    return true;
+};
+
+const getFrameRate = () => {
+    // implement for LOW, HIGH, MID, options...
+    return 100;
+};
+
+const runGame = () => {
+    const run = () => runFrame();
+
+    if (!run) {
+        console.log('Failed to run game!');
+        return ;
+    }
+    const frameRate = getFrameRate();
+
+    setInterval(() => {
+        run();
+    }, frameRate);
+    return true;
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const isSetup = setup();
+
+    if (!isSetup) {
+        console.log('Failed to initialize game!');
+        // delete stuffs here!
+        // make deletion funcs, deleteBoard, removeListeners, unconfig
+        return ;
+    }
+    runGame();
 });

@@ -1,13 +1,29 @@
+h2 {
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
+}
+
+#score {
+    text-align: center;
+}
+
 .grid {
-    height: 560px;
-    width: 560px;
+    height: 600px;
+    width: 600px;
     display: flex;
     flex-wrap: wrap;
+    background-color: #222;
+    padding: 4em;
+    margin: 0 auto;
 }
 
 .grid div {
-    height: 64px;
-    width: 64px;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
+    height: 70px;
+    width: 70px;
+    margin: 2px;
 }
