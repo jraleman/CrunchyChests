@@ -1,13 +1,25 @@
-h2 {
-    text-align: center;
+html {
+    background-color: #222;
 }
 
-h3 {
+body {
+    padding: 2em;
+}
+
+h2 {
     text-align: center;
+    color: #eee;
+    font-size: 72px;
 }
 
 #score {
     text-align: center;
+    color: #eee;
+    font-size: 32px;
+    padding: 1em;
+    font-weight: bold;
+    letter-spacing: 6px;
+    opacity: 0.75;
 }
 
 .grid {
@@ -18,12 +30,17 @@ h3 {
     background-color: #222;
     padding: 4em;
     margin: 0 auto;
+    border: grey solid thick;
+    border-radius: 2em;
 }
 
 .grid div {
     background-repeat: no-repeat;
     background-size: contain;
-    height: 70px;
-    width: 70px;
+    height: 68px;
+    width: 68px;
     margin: 2px;
+    border: white solid 1px;
+    border-radius: 2em;
+    background-color: white;
 }
