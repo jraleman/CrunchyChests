@@ -1,5 +1,6 @@
 const width = 8;
 const totalTiles = width * width;
+const maxTilesScore = 42;
 const squares = [];
 const title = document.querySelector('h2');
 const grid = document.querySelector('.grid');
@@ -61,29 +62,6 @@ const highlightTiles = (opacity = 1) => {
             continue;
         }
         squares[validMoves[i]].style.opacity = opacity;
-    }
-};
-
-const getAllSiblings = (elem, filter) => {
-    var sibs = [];
-    elem = elem.parentNode.firstChild;
-    do {
-        if (elem.nodeType === 3) {
-            continue; // text node
-        }
-        if (!filter || filter(elem)) {
-            sibs.push(elem);
-        }
-    } while (elem = elem.nextSibling)
-    return sibs;
-};
-
-const filterByType = (elem) => {
-    switch (elem.nodeName.toUpperCase()) {
-        case 'DIV':
-            return elem;
-        default:
-            return false;
     }
 };
 
@@ -213,7 +191,8 @@ const checkRowForThree = () => {
                 squares[idx].style.opacity = 1;
                 if (squares[idx].style.filter !== 'saturate(1)') {
                     tiles += 1;
-                    displayTiles.innerHTML = `${tiles} / ${totalTiles} - 🗝`;
+                    displayTiles.innerHTML = `${tiles} / ${maxTilesScore} - 🗝`;
+                    // displayTiles.innerHTML = `${tiles} / ${totalTiles} - 🗝`;
                 }
                 squares[idx].style.filter = 'saturate(1)';
             });
@@ -341,6 +320,8 @@ const setup = () => {
 
 const runFrame = () => {
     try {
+        // TODO: fix issue of last tile (bottom-right) corner not working
+        // this means that (tiles < totalTiles) will always be true
         moveDownTiles();
         checkRowForThree();
         checkColForThree();
@@ -364,7 +345,8 @@ const runGame = () => {
     const cycleTime = 100;
     const runId = setInterval(() => {
         run();
-        if (tiles >= totalTiles) {
+        // if (tiles >= totalTiles) {
+        if (tiles >= maxTilesScore) {
             clearInterval(runId);
             window.alert('You are winner!! 🎉 🏆');
             window.location.href = 'https://github.com/jraleman/CrunchyChests'
