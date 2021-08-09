@@ -6,6 +6,8 @@
 }
 
 .grid div {
-    height: 70px;
-    width: 70px;
+    height: 64px;
+    width: 64px;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
