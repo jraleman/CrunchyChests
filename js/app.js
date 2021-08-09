@@ -93,7 +93,7 @@ const dragOver = (e) => {
     const { target: { id }} = e;
     const randomColor = Math.floor(Math.random() * tilesImages.length);
     const color = bgColors[randomColor]
-    grid.style.border = `💰 - ${color} - solid thick`;
+    grid.style.border = `${color} solid thick`;
     title.style.opacity = 0.75;
     displayScore.style.opacity = 0.75;
     e.preventDefault();
