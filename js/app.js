@@ -1,9 +1,9 @@
 const width = 8;
+const totalTiles = width * width;
 const squares = [];
 const title = document.querySelector('h2');
 const grid = document.querySelector('.grid');
 const displayScore = document.getElementById('score'); // 💰
-// x / squares.length
 const displayTiles = document.getElementById('tiles'); // 🗝
 const displayMoves = document.getElementById('moves'); // 🧠
 
@@ -36,7 +36,7 @@ let tileIdBeingDragged;
 // js/helpers.js
 
 const createBoard = () => {
-    const totalGrids = (width * width);
+    const totalGrids = (totalTiles);
     for (let i = 0; i < totalGrids; i += 1) {
         const square = document.createElement('div');
         const randomColor = Math.floor(Math.random() * tilesImages.length);
@@ -192,7 +192,7 @@ const rowOff = [
 ];
 
 const checkRowForThree = () => {
-    const checkRow = (width * width) - 3;
+    const checkRow = (totalTiles) - 3;
     for (let i = 0; i < checkRow; i += 1) {
         const rowOfThree = [i, i + 1, i + 2];
         const decidedTile = squares[i].style.backgroundImage;
@@ -213,7 +213,7 @@ const checkRowForThree = () => {
                 squares[idx].style.opacity = 1;
                 if (squares[idx].style.filter !== 'saturate(1)') {
                     tiles += 1;
-                    displayTiles.innerHTML = `${tiles} / ${width * width} - 🗝`;
+                    displayTiles.innerHTML = `${tiles} / ${totalTiles} - 🗝`;
                 }
                 squares[idx].style.filter = 'saturate(1)';
             });
@@ -222,7 +222,7 @@ const checkRowForThree = () => {
 };
 
 const checkRowForFour = () => {
-    const checkRow = (width * width) - 4;
+    const checkRow = (totalTiles) - 4;
     for (let i = 0; i < checkRow; i += 1) {
         const rowOfFour = [i, i + 1, i + 2, i + 3];
         const decidedTile = squares[i].style.backgroundImage;
@@ -252,7 +252,7 @@ const checkRowForFour = () => {
 };
 
 const checkColForThree = () => {
-    const checkCol = (width * width) - (width * 2) - 1;
+    const checkCol = (totalTiles) - (width * 2) - 1;
     for (let i = 0; i < checkCol; i += 1) {
         const colOfThree = [i, i + width, i + (width * 2)];
         const decidedTile = squares[i].style.backgroundImage;
@@ -276,7 +276,7 @@ const checkColForThree = () => {
 };
 
 const checkColForFour = () => {
-    const checkCol = (width * width) - (width * 2) - 1;
+    const checkCol = (totalTiles) - (width * 2) - 1;
     for (let i = 0; i < checkCol; i += 1) {
         const colOfFour = [i, i + width, i + (width * 2), i + (width * 3)];
         const decidedTile = squares[i].style.backgroundImage;
@@ -303,7 +303,7 @@ const checkColForFour = () => {
 // js/helpers.js
 
 const moveDownTiles = () => {
-    const moveDown = (width * width) - 9; // 55
+    const moveDown = (totalTiles) - 9; // 55
     for (let i = 0; i < moveDown; i += 1) {
         if (squares[i + width].style.backgroundImage === '') {
             squares[i + width].style.backgroundImage = squares[i].style.backgroundImage;
@@ -360,11 +360,15 @@ const runGame = () => {
         console.debug('Failed to run game!');
         return ;
     }
-    const cycleTime = 100;
 
-    // we can refactor this if we implement checkIfListeners();
-    setInterval(() => {
+    const cycleTime = 100;
+    const runId = setInterval(() => {
         run();
+        if (tiles >= totalTiles) {
+            clearInterval(runId);
+            window.alert('You are winner!! 🎉 🏆');
+            window.location.href = 'https://github.com/jraleman/CrunchyChests'
+        }
     }, cycleTime);
     return true;
 };
