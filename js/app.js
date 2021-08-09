@@ -2,7 +2,10 @@ const width = 8;
 const squares = [];
 const title = document.querySelector('h2');
 const grid = document.querySelector('.grid');
-const displayScore = document.getElementById('score');
+const displayScore = document.getElementById('score'); // 💰
+// x / squares.length
+const displayTiles = document.getElementById('tiles'); // 🗝
+const displayMoves = document.getElementById('moves'); // 🧠
 
 const bgColors = [
     '#006cd1',
@@ -23,9 +26,14 @@ const tilesImages = [
 ];
 
 let score = 0;
+let tiles = 0;
+let moves = 0;
 let tileBeingDragged;
 let tileBeingReplaced;
 let tileIdBeingDragged;
+
+// ------------------------------------------------------
+// js/helpers.js
 
 const createBoard = () => {
     const totalGrids = (width * width);
@@ -48,14 +56,39 @@ const highlightTiles = (opacity = 1) => {
         tileIdBeingDragged + width,
     ];
     for (let i = 0; i < validMoves.length; i += 1) {
-        if (!squares[validMoves[i]] || squares[validMoves[i]].style.opacity > 0.5) {
+        // somewhere here
+        if (!squares[validMoves[i]] || squares[validMoves[i]].style.opacity > opacity) {
             continue;
         }
         squares[validMoves[i]].style.opacity = opacity;
     }
 };
 
+const getAllSiblings = (elem, filter) => {
+    var sibs = [];
+    elem = elem.parentNode.firstChild;
+    do {
+        if (elem.nodeType === 3) {
+            continue; // text node
+        }
+        if (!filter || filter(elem)) {
+            sibs.push(elem);
+        }
+    } while (elem = elem.nextSibling)
+    return sibs;
+};
+
+const filterByType = (elem) => {
+    switch (elem.nodeName.toUpperCase()) {
+        case 'DIV':
+            return elem;
+        default:
+            return false;
+    }
+};
+
 // ------------------------------------------------------
+// js/dragEvents.js
 
 const dragStart = (e) => {
     const { target: { id, style: { backgroundImage } }} = e;
@@ -75,8 +108,11 @@ const dragEnd = (e) => {
     ];
     const isValid = validMoves.includes(squareIdBeingReplaced);
 
+    // see how to implement moves counter here...
     if (squareIdBeingReplaced && isValid) {
         squareIdBeingReplaced = null;
+        moves += 1;
+        displayMoves.innerHTML = `${moves} - 🧠`;
     } else if (squareIdBeingReplaced && !isValid) {
         squares[squareIdBeingReplaced].style.backgroundImage = tileBeingReplaced;
         squares[tileIdBeingDragged].style.backgroundImage = tileBeingDragged;
@@ -86,6 +122,7 @@ const dragEnd = (e) => {
     highlightTiles(0.5);
     title.style.opacity = 1;
     displayScore.style.opacity = 0.95;
+    displayMoves.style.opacity = 0.95;
     console.debug(id, 'dragEnd');
 };
 
@@ -96,6 +133,7 @@ const dragOver = (e) => {
     grid.style.border = `${color} solid thick`;
     title.style.opacity = 0.75;
     displayScore.style.opacity = 0.75;
+    displayMoves.style.opacity = 0.95;
     e.preventDefault();
     console.debug(id, 'dragOver');
 };
@@ -124,6 +162,11 @@ const dragDrop = (e) => {
     console.debug(id, 'dragDrop');
 };
 
+// ------------------------------------------------------
+// js/listeners.js
+
+const checkIfListeners = () => {};
+
 const addListeners = () => {
     squares.forEach((s) => s.addEventListener('dragstart', dragStart));
     squares.forEach((s) => s.addEventListener('dragend', dragEnd));
@@ -134,6 +177,19 @@ const addListeners = () => {
 };
 
 // ------------------------------------------------------
+// js/verifiers.js
+
+// we can abstract to an object:
+
+// see how to create an array by M = N + 1 expr array;
+// do the same for rowOfFour, rowOfTwo, rowOfFive...
+// and if function is same for colOff*, refactor into this object too:
+const rowOff = [
+    {
+        arraySize: 3, // i, i + 1, i + 2
+        notValid: [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55],
+    }
+];
 
 const checkRowForThree = () => {
     const checkRow = (width * width) - 3;
@@ -151,10 +207,14 @@ const checkRowForThree = () => {
 
         if (tileMatch) {
             score += 3;
-            displayScore.innerHTML = `💰 - ${score} - 🗝`;
+            displayScore.innerHTML = `${score} - 💰`;
             rowOfThree.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                if (squares[idx].style.filter !== 'saturate(1)') {
+                    tiles += 1;
+                    displayTiles.innerHTML = `${tiles} / ${width * width} - 🗝`;
+                }
                 squares[idx].style.filter = 'saturate(1)';
             });
         }
@@ -177,10 +237,14 @@ const checkRowForFour = () => {
 
         if (tileMatch) {
             score += 4;
-            displayScore.innerHTML = `💰 - ${score} - 🗝`;
+            displayScore.innerHTML = `${score} - 💰`;
             rowOfFour.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                if (squares[idx].style.filter !== 'saturate(1)') {
+                    tiles += 1;
+                    displayTiles.innerHTML = `${tiles} - 🗝`;
+                }
                 squares[idx].style.filter = 'saturate(1)';
             });
         }
@@ -197,10 +261,14 @@ const checkColForThree = () => {
 
         if (tileMatch) {
             score += 3;
-            displayScore.innerHTML = `💰 - ${score} - 🗝`;
+            displayScore.innerHTML = `${score} - 💰`;
             colOfThree.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                if (squares[idx].style.filter !== 'saturate(1)') {
+                    tiles += 1;
+                    displayTiles.innerHTML = `${tiles} - 🗝`;
+                }
                 squares[idx].style.filter = 'saturate(1)';
             });
         }
@@ -217,15 +285,22 @@ const checkColForFour = () => {
 
         if (tileMatch) {
             score += 4;
-            displayScore.innerHTML = `💰 - ${score} - 🗝`;
+            displayScore.innerHTML = `${score} - 💰`;
             colOfFour.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                if (squares[idx].style.filter !== 'saturate(1)') {
+                    tiles += 1;
+                    displayTiles.innerHTML = `${tiles} - 🗝`;
+                }
                 squares[idx].style.filter = 'saturate(1)';
             });
         }
     }
 };
+
+// ------------------------------------------------------
+// js/helpers.js
 
 const moveDownTiles = () => {
     const moveDown = (width * width) - 9; // 55
@@ -287,6 +362,7 @@ const runGame = () => {
     }
     const cycleTime = 100;
 
+    // we can refactor this if we implement checkIfListeners();
     setInterval(() => {
         run();
     }, cycleTime);
