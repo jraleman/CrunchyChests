@@ -84,8 +84,8 @@ const dragEnd = (e) => {
         squares[tileIdBeingDragged].style.backgroundImage = tileBeingDragged;
     }
     highlightTiles(0.5);
-    title.style.opacity = 0.85;
-    document.body.style.opacity = 1.0;
+    title.style.opacity = 1;
+    displayScore.style.opacity = 0.95;
     console.debug(id, 'dragEnd');
 };
 
@@ -93,9 +93,9 @@ const dragOver = (e) => {
     const { target: { id }} = e;
     const randomColor = Math.floor(Math.random() * tilesImages.length);
     const color = bgColors[randomColor]
-    grid.style.border = `${color} solid thick`;
-    title.style.opacity = 0.5;
-    document.body.style.opacity = 0.85;
+    grid.style.border = `💰 - ${color} - solid thick`;
+    title.style.opacity = 0.75;
+    displayScore.style.opacity = 0.75;
     e.preventDefault();
     console.debug(id, 'dragOver');
 };
@@ -111,7 +111,6 @@ const dragEnter = (e) => {
 const dragLeave = (e) => {
     const { target: { id } } = e;
 
-    document.body.style.backgroundColor = 'rgba(0,0,0,0)';
     grid.style.border = 'grey solid thick';
     console.debug(id, 'dragLeave');
 };
@@ -152,10 +151,11 @@ const checkRowForThree = () => {
 
         if (tileMatch) {
             score += 3;
-            displayScore.innerHTML = `${score} 🗝`;
+            displayScore.innerHTML = `💰 - ${score} - 🗝`;
             rowOfThree.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                squares[idx].style.filter = 'saturate(1)';
             });
         }
     }
@@ -177,10 +177,11 @@ const checkRowForFour = () => {
 
         if (tileMatch) {
             score += 4;
-            displayScore.innerHTML = `${score} 🗝`;
+            displayScore.innerHTML = `💰 - ${score} - 🗝`;
             rowOfFour.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                squares[idx].style.filter = 'saturate(1)';
             });
         }
     }
@@ -196,10 +197,11 @@ const checkColForThree = () => {
 
         if (tileMatch) {
             score += 3;
-            displayScore.innerHTML = `${score} 🗝`;
+            displayScore.innerHTML = `💰 - ${score} - 🗝`;
             colOfThree.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                squares[idx].style.filter = 'saturate(1)';
             });
         }
     }
@@ -215,10 +217,11 @@ const checkColForFour = () => {
 
         if (tileMatch) {
             score += 4;
-            displayScore.innerHTML = `${score} 🗝`;
+            displayScore.innerHTML = `💰 - ${score} - 🗝`;
             colOfFour.forEach((idx) => {
                 squares[idx].style.backgroundImage = '';
                 squares[idx].style.opacity = 1;
+                squares[idx].style.filter = 'saturate(1)';
             });
         }
     }

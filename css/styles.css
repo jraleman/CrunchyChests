@@ -3,13 +3,20 @@ html {
 }
 
 body {
-    padding: 2em;
+    padding: 4em;
+    background: linear-gradient(135deg, black 25%, transparent 25%) -50px 0,
+    linear-gradient(225deg, black 25%, transparent 25%) -50px 0,
+    linear-gradient(315deg, black 25%, transparent 25%),
+    linear-gradient(45deg, black 25%, transparent 25%);	
+    background-size: 2em 2em;
 }
 
 h2 {
     text-align: center;
     color: #eee;
     font-size: 72px;
+    margin: 0 auto;
+    margin-bottom: 1em;
 }
 
 #score {
@@ -19,7 +26,14 @@ h2 {
     padding: 1em;
     font-weight: bold;
     letter-spacing: 6px;
-    opacity: 0.75;
+    opacity: 0.95;
+    width: 50%;
+    margin: 0 auto;
+    background: #222;
+    padding: 1em;
+    border: white solid 2px;
+    border-radius: 1em;
+    margin-bottom: 1em;
 }
 
 .grid {
@@ -44,4 +58,5 @@ h2 {
     border-radius: 2em;
     background-color: white;
     opacity: 0.5;
+    filter: saturate(0.5);
 }
