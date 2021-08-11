@@ -2,4 +2,5 @@
 
 [Click here to play!](https://jraleman.com/CrunchyChests)
 
-![screenshot](https://user-images.githubusercontent.com/11222980/128672162-fd1762fc-6230-4dbe-985b-e3005872c5f6.png)
+<img width="1329" alt="screenshot" src="https://user-images.githubusercontent.com/11222980/129043320-7e31b376-68ad-440c-9352-afec0b58b40e.png">
+
