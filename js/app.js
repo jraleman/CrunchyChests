@@ -65,6 +65,24 @@ const highlightTiles = (opacity = 1) => {
     }
 };
 
+const updateTiles = (idx, t = 1) => {
+    squares[idx].style.backgroundImage = '';
+    squares[idx].style.opacity = 1;
+    if (squares[idx].style.filter !== 'saturate(1)') {
+        tiles += t;
+        displayTiles.innerHTML = `${tiles} - 🗝`;
+    }
+    squares[idx].style.filter = 'saturate(1)';
+}
+
+const updateScore = (s, arr) => {
+    score += s;
+    displayScore.innerHTML = `${score} - 💰`;
+    arr.forEach((idx) => {
+        updateTiles(idx);
+    });
+}
+
 // ------------------------------------------------------
 // js/dragEvents.js
 
@@ -155,131 +173,68 @@ const addListeners = () => {
 };
 
 // ------------------------------------------------------
-// js/verifiers.js
+// js/possibleScores.js
 
-// we can abstract to an object:
-
-// see how to create an array by M = N + 1 expr array;
-// do the same for rowOfFour, rowOfTwo, rowOfFive...
-// and if function is same for colOff*, refactor into this object too:
-const rowOff = [
+const possibleScores = [
     {
-        arraySize: 3, // i, i + 1, i + 2
+        key: 'rowOfFour',
+        score: 4,
+        arraySize: 4,
+        getArrayByScore: (i, s) => ([i, i + 1, i + 2, i + 3]),
+        getNumTiles: (size, total, width) => total - size,
         notValid: [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55],
-    }
+    },
+    {
+        key: 'rowOfThree',
+        score: 3,
+        arraySize: 3,
+        getArrayByScore: (i, s) => ([i, i + 1, i + 2]),
+        getNumTiles: (size, total, width) => total - size,
+        notValid: [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55],
+    },
+    {
+        key: 'colOfFour',
+        score: 4,
+        arraySize: 4,
+        getArrayByScore: (i, s) => ([i, i + width, i + (width * 2), i + (width * 3)]),
+        getNumTiles: (size, total, width) => total - (width * 2) - 1,
+    },
+    {
+        key: 'colOfThree',
+        score: 3,
+        arraySize: 3,
+        getArrayByScore: (i, s) => ([i, i + width, i + (width * 2)]),
+        getNumTiles: (size, total, width) => total - (width * 2) - 1,
+    },
 ];
-
-const checkRowForThree = () => {
-    const checkRow = (totalTiles) - 3;
-    for (let i = 0; i < checkRow; i += 1) {
-        const rowOfThree = [i, i + 1, i + 2];
-        const decidedTile = squares[i].style.backgroundImage;
-        const isBlank = decidedTile === '';
-        const tileMatch = rowOfThree.every((idx) => 
-            (squares[idx].style.backgroundImage === decidedTile && !isBlank));
-
-        const notValid = [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55];
-        if (notValid.includes(i)) {
-            continue;
-        }
-
-        if (tileMatch) {
-            score += 3;
-            displayScore.innerHTML = `${score} - 💰`;
-            rowOfThree.forEach((idx) => {
-                squares[idx].style.backgroundImage = '';
-                squares[idx].style.opacity = 1;
-                if (squares[idx].style.filter !== 'saturate(1)') {
-                    tiles += 1;
-                    displayTiles.innerHTML = `${tiles} / ${maxTilesScore} - 🗝`;
-                    // displayTiles.innerHTML = `${tiles} / ${totalTiles} - 🗝`;
-                }
-                squares[idx].style.filter = 'saturate(1)';
-            });
-        }
-    }
-};
-
-const checkRowForFour = () => {
-    const checkRow = (totalTiles) - 4;
-    for (let i = 0; i < checkRow; i += 1) {
-        const rowOfFour = [i, i + 1, i + 2, i + 3];
-        const decidedTile = squares[i].style.backgroundImage;
-        const isBlank = decidedTile === '';
-        const tileMatch = rowOfFour.every((idx) => 
-            (squares[idx].style.backgroundImage === decidedTile && !isBlank));
-
-        const notValid = [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55];
-        if (notValid.includes(i)) {
-            continue;
-        }
-
-        if (tileMatch) {
-            score += 4;
-            displayScore.innerHTML = `${score} - 💰`;
-            rowOfFour.forEach((idx) => {
-                squares[idx].style.backgroundImage = '';
-                squares[idx].style.opacity = 1;
-                if (squares[idx].style.filter !== 'saturate(1)') {
-                    tiles += 1;
-                    displayTiles.innerHTML = `${tiles} - 🗝`;
-                }
-                squares[idx].style.filter = 'saturate(1)';
-            });
-        }
-    }
-};
-
-const checkColForThree = () => {
-    const checkCol = (totalTiles) - (width * 2) - 1;
-    for (let i = 0; i < checkCol; i += 1) {
-        const colOfThree = [i, i + width, i + (width * 2)];
-        const decidedTile = squares[i].style.backgroundImage;
-        const isBlank = decidedTile === '';
-        const tileMatch = colOfThree.every((idx) => squares[idx].style.backgroundImage === decidedTile && !isBlank);
-
-        if (tileMatch) {
-            score += 3;
-            displayScore.innerHTML = `${score} - 💰`;
-            colOfThree.forEach((idx) => {
-                squares[idx].style.backgroundImage = '';
-                squares[idx].style.opacity = 1;
-                if (squares[idx].style.filter !== 'saturate(1)') {
-                    tiles += 1;
-                    displayTiles.innerHTML = `${tiles} - 🗝`;
-                }
-                squares[idx].style.filter = 'saturate(1)';
-            });
-        }
-    }
-};
-
-const checkColForFour = () => {
-    const checkCol = (totalTiles) - (width * 2) - 1;
-    for (let i = 0; i < checkCol; i += 1) {
-        const colOfFour = [i, i + width, i + (width * 2), i + (width * 3)];
-        const decidedTile = squares[i].style.backgroundImage;
-        const isBlank = decidedTile === '';
-        const tileMatch = colOfFour.every((idx) => squares[idx].style.backgroundImage === decidedTile && !isBlank);
-
-        if (tileMatch) {
-            score += 4;
-            displayScore.innerHTML = `${score} - 💰`;
-            colOfFour.forEach((idx) => {
-                squares[idx].style.backgroundImage = '';
-                squares[idx].style.opacity = 1;
-                if (squares[idx].style.filter !== 'saturate(1)') {
-                    tiles += 1;
-                    displayTiles.innerHTML = `${tiles} - 🗝`;
-                }
-                squares[idx].style.filter = 'saturate(1)';
-            });
-        }
-    }
-};
 
 // ------------------------------------------------------
 // js/helpers.js
+
+const checkScore = ({
+    key,
+    score: s,
+    arraySize,
+    getNumTiles,
+    getArrayByScore,
+    notValid,
+}) => {
+    console.debug('checkScore: ', key);
+    const numTiles = getNumTiles(arraySize, totalTiles, width);
+    for (let i = 0; i < numTiles; i += 1) {
+        if (notValid && notValid.includes(i)) {
+            continue;
+        }
+        const arrayByScore = getArrayByScore(i, s);
+        const decidedTile = squares[i].style.backgroundImage;
+        const isBlank = decidedTile === '';
+        const tileMatch = arrayByScore.every((idx) => 
+            (squares[idx].style.backgroundImage === decidedTile && !isBlank));
+        if (tileMatch) {
+           updateScore(s, arrayByScore);
+        }
+    }
+};
 
 const moveDownTiles = () => {
     const moveDown = (totalTiles) - 9; // 55
@@ -320,13 +275,14 @@ const setup = () => {
 
 const runFrame = () => {
     try {
-        // TODO: fix issue of last tile (bottom-right) corner not working
-        // this means that (tiles < totalTiles) will always be true
+        // TODO: use async/await && drag events to run possibleScores
+        // run moveDownTiles to update tiles only
         moveDownTiles();
-        checkRowForThree();
-        checkColForThree();
-        checkRowForFour();
-        checkColForFour();
+        possibleScores.map((score) => {
+            // TODO: fix issue of last tile (bottom-right) corner not working
+            // this means that (tiles < totalTiles) will always be true
+            checkScore(score);
+        });
     } catch (error) {
         console.error(error);
         return false;
