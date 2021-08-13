@@ -13,7 +13,8 @@ html {
 }
 
 body {
-    padding: 4em;
+    padding-bottom: 8em;
+    padding-top: 8em;
     background: linear-gradient(135deg, black 25%, transparent 25%) -50px 0,
     linear-gradient(225deg, black 25%, transparent 25%) -50px 0,
     linear-gradient(315deg, black 25%, transparent 25%),
@@ -26,29 +27,16 @@ h2 {
     color: #eee;
     font-size: 72px;
     margin: 0 auto;
-    margin-bottom: 1em;
+    margin-bottom: 2em;
     font-family: devinne-swash-shadow;
 }
 
-#score {
-    text-align: right;
-    color: #eee;
-    font-size: 32px;
-    padding: 1em;
-    font-weight: bold;
-    letter-spacing: 6px;
-    opacity: 0.95;
-    width: 50%;
+.score-board {
+    max-width: 735px;
     margin: 0 auto;
-    background: #222;
-    padding: 1em;
-    border: white solid 2px;
-    border-radius: 1em;
-    margin-bottom: 1em;
 }
 
-
-#moves {
+.score-board-item {
     text-align: right;
     color: #eee;
     font-size: 32px;
@@ -56,30 +44,11 @@ h2 {
     font-weight: bold;
     letter-spacing: 6px;
     opacity: 0.95;
-    width: 50%;
-    margin: 0 auto;
     background: #222;
-    padding: 1em;
     border: white solid 2px;
     border-radius: 1em;
-    margin-bottom: 1em;
-}
-
-#tiles {
-    text-align: right;
-    color: #eee;
-    font-size: 32px;
-    padding: 1em;
-    font-weight: bold;
-    letter-spacing: 6px;
-    opacity: 0.95;
-    width: 50%;
-    margin: 0 auto;
-    background: #222;
-    padding: 1em;
-    border: white solid 2px;
-    border-radius: 1em;
-    margin-bottom: 1em;
+    display: flex;
+    justify-content: space-around;
 }
 
 .grid {
