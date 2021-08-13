@@ -83,6 +83,9 @@ h2 {
         padding-bottom: 0em;
         padding-top: 0em;
     }
+    h2 {
+        width: 10em;
+    }
 }
 
 @-webkit-keyframes tile {
