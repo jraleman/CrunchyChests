@@ -1,7 +1,7 @@
 // constants
 const width = 8;
 const totalTiles = width * width;
-const maxTilesScore = 42;
+const maxTilesScore = totalTiles;
 
 // themes
 const bgColors = [
@@ -386,7 +386,6 @@ const runGame = () => {
     const cycleTime = 150;
     const runId = setInterval(() => {
         run();
-        // if (tiles >= totalTiles) {
         if (tiles >= maxTilesScore) {
             window.clearInterval(runId);
             window.alert('You are winner!! 🎉 🏆');
