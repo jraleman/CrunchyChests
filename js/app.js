@@ -85,6 +85,32 @@ const updateScore = (s, arr) => {
 }
 
 // ------------------------------------------------------
+// js/touchEvents.js
+
+// const touchCancel = (e) => {
+//     // console.log('touchCancel: ', e);
+//     // dragDrop(e);
+//     // dragEnd(e);
+// };
+
+// const touchEnd = (e) => {
+//     // console.log('touchEnd: ', e);
+//     dragDrop(e);
+//     dragEnd(e);
+// };
+
+// const touchMove = (e) => {
+//     // console.log('touchMove: ', e);
+//     dragOver(e);
+//     // dragDrop(e);
+// };
+
+// const touchStart = (e) => {
+//     // console.log('touchStart: ', e);
+//     dragStart(e);
+// };
+
+// ------------------------------------------------------
 // js/dragEvents.js
 
 const dragStart = (e) => {
@@ -167,12 +193,19 @@ const dragDrop = (e) => {
 const checkIfListeners = () => {};
 
 const addListeners = () => {
+    // dragEvents
     squares.forEach((s) => s.addEventListener('dragstart', dragStart));
     squares.forEach((s) => s.addEventListener('dragend', dragEnd));
     squares.forEach((s) => s.addEventListener('dragover', dragOver));
     squares.forEach((s) => s.addEventListener('dragenter', dragEnter));
     squares.forEach((s) => s.addEventListener('dragleave', dragLeave));
     squares.forEach((s) => s.addEventListener('drop', dragDrop));
+
+    // touchEvents
+    // squares.forEach((s) => s.addEventListener('touchcancel', touchCancel));
+    // squares.forEach((s) => s.addEventListener('touchend', touchEnd));
+    // squares.forEach((s) => s.addEventListener('touchmove', touchMove));
+    // squares.forEach((s) => s.addEventListener('touchstart', touchStart));
 };
 
 // ------------------------------------------------------
@@ -226,7 +259,6 @@ const checkScore = ({
     getArrayByScore,
     notValid,
 }) => {
-    console.debug('checkScore: ', key);
     const numTiles = getNumTiles(arraySize, totalTiles, width);
     for (let i = 0; i < numTiles; i += 1) {
         if (notValid && notValid.includes(i)) {
@@ -270,9 +302,9 @@ const config = () => {
 
 const setup = () => {
     try {
+        // config();
         createBoard();
         addListeners();
-        config();
     } catch (error) {
         console.error(error);
         return false;
