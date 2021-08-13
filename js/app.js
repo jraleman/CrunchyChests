@@ -70,7 +70,7 @@ const updateTiles = (idx, t = 1) => {
     squares[idx].style.opacity = 1;
     if (squares[idx].style.filter !== 'saturate(1)') {
         tiles += t;
-        displayTiles.innerHTML = `${tiles} - 🗝`;
+        displayTiles.innerHTML = `${tiles} / ${maxTilesScore} - 🗝`;
     }
     squares[idx].style.filter = 'saturate(1)';
 }
@@ -180,15 +180,17 @@ const possibleScores = [
         key: 'rowOfFour',
         score: 4,
         arraySize: 4,
-        getArrayByScore: (i, s) => ([i, i + 1, i + 2, i + 3]),
+        getArrayByScore: (i, s) => ([i, (i + 1), (i + 2), (i + 3)]),
+        // getNumTiles: () => 60,
         getNumTiles: (size, total, width) => total - size,
-        notValid: [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55],
+        notValid: [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55],
     },
     {
         key: 'rowOfThree',
         score: 3,
         arraySize: 3,
-        getArrayByScore: (i, s) => ([i, i + 1, i + 2]),
+        getArrayByScore: (i, s) => ([i, (i + 1), (i + 2)]),
+        // getNumTiles: () => 61,
         getNumTiles: (size, total, width) => total - size,
         notValid: [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55],
     },
@@ -196,14 +198,16 @@ const possibleScores = [
         key: 'colOfFour',
         score: 4,
         arraySize: 4,
-        getArrayByScore: (i, s) => ([i, i + width, i + (width * 2), i + (width * 3)]),
+        getArrayByScore: (i, s) => ([i, (i + width), (i + (width * 2)), (i + (width * 3))]),
+        // getNumTiles: () => 39,
         getNumTiles: (size, total, width) => total - (width * 2) - 1,
     },
     {
         key: 'colOfThree',
         score: 3,
         arraySize: 3,
-        getArrayByScore: (i, s) => ([i, i + width, i + (width * 2)]),
+        getArrayByScore: (i, s) => ([i, (i + width), (i + (width * 2))]),
+        // getNumTiles: () => 47,
         getNumTiles: (size, total, width) => total - (width * 2) - 1,
     },
 ];
@@ -236,7 +240,7 @@ const checkScore = ({
     }
 };
 
-const moveDownTiles = () => {
+const moveTilesDown = () => {
     const moveDown = (totalTiles) - 9; // 55
     for (let i = 0; i < moveDown; i += 1) {
         if (squares[i + width].style.backgroundImage === '') {
@@ -273,16 +277,16 @@ const setup = () => {
     return true;
 };
 
+// TODO: use async/await && drag events to run possibleScores
+// run moveTilesDown to update tiles only
+
+// TODO: fix issue of last tile (bottom-right) corner not working
+// this means that (tiles < totalTiles) will always be true
+
 const runFrame = () => {
     try {
-        // TODO: use async/await && drag events to run possibleScores
-        // run moveDownTiles to update tiles only
-        moveDownTiles();
-        possibleScores.map((score) => {
-            // TODO: fix issue of last tile (bottom-right) corner not working
-            // this means that (tiles < totalTiles) will always be true
-            checkScore(score);
-        });
+        moveTilesDown();
+        possibleScores.map((score) => checkScore(score));
     } catch (error) {
         console.error(error);
         return false;
@@ -291,6 +295,9 @@ const runFrame = () => {
 };
 
 const runGame = () => {
+    // we have to run this once, before running game
+    // but global vars are causing issues
+    // possibleScores.map((score) => checkScore(score));
     const run = () => runFrame();
 
     if (!run) {
@@ -298,7 +305,7 @@ const runGame = () => {
         return ;
     }
 
-    const cycleTime = 100;
+    const cycleTime = 150;
     const runId = setInterval(() => {
         run();
         // if (tiles >= totalTiles) {
