@@ -1,14 +1,9 @@
+// constants
 const width = 8;
 const totalTiles = width * width;
 const maxTilesScore = 42;
-const squares = [];
-const title = document.querySelector('h2');
-const grid = document.querySelector('.grid');
-const scoreBoard = document.querySelector('.score-board-items');
-const displayScore = document.getElementById('score'); // 💰
-const displayTiles = document.getElementById('tiles'); // 🗝
-const displayMoves = document.getElementById('moves'); // 🧠
 
+// themes
 const bgColors = [
     '#006cd1',
     '#bc5a00',
@@ -17,7 +12,6 @@ const bgColors = [
     '#bc0004',
     '#42b284',
 ];
-
 const tilesImages = [
     'url(images/red.png)',
     'url(images/dark.png)',
@@ -27,19 +21,29 @@ const tilesImages = [
     'url(images/blue.png)',
 ];
 
+// counters
 let score = 0;
 let tiles = 0;
 let moves = 0;
+// tiles + state
+let squares = [];
 let tileBeingDragged;
 let tileBeingReplaced;
 let tileIdBeingDragged;
+// objects
+const title = document.querySelector('h2');
+const grid = document.querySelector('.grid');
+const scoreBoard = document.querySelector('.score-board-items');
+const displayScore = document.getElementById('score'); // 💰
+const displayTiles = document.getElementById('tiles'); // 🗝
+const displayMoves = document.getElementById('moves'); // 🧠
+
 
 // ------------------------------------------------------
 // js/helpers.js
 
 const createBoard = () => {
-    const totalGrids = (totalTiles);
-    for (let i = 0; i < totalGrids; i += 1) {
+    for (let i = 0; i < totalTiles; i += 1) {
         const square = document.createElement('div');
         const randomColor = Math.floor(Math.random() * tilesImages.length);
         square.style.backgroundImage = tilesImages[randomColor];
@@ -48,6 +52,8 @@ const createBoard = () => {
         grid.appendChild(square);
         squares.push(square);
     }
+    const tiles = squares;
+    return [grid, tiles];
 };
 
 const highlightTiles = (opacity = 1) => {
@@ -58,18 +64,38 @@ const highlightTiles = (opacity = 1) => {
         tileIdBeingDragged + width,
     ];
     for (let i = 0; i < validMoves.length; i += 1) {
-        // somewhere here
-        if (!squares[validMoves[i]] || squares[validMoves[i]].style.opacity > opacity) {
+        const tileInRow = (validMoves[i] % 8);
+        if (!tileInRow || squares[validMoves[i]]?.style.opacity === 1) {
             continue;
         }
-        squares[validMoves[i]].style.opacity = opacity;
+        squares[validMoves[i]]?.classList.add("shake");
+    }
+};
+
+const moveTilesDown = () => {
+    const moveDown = (totalTiles) - 9; // 55
+    for (let i = 0; i < moveDown; i += 1) {
+        if (squares[i + width]?.style.backgroundImage === '') {
+            squares[i + width].style.backgroundImage = squares[i].style.backgroundImage;
+            squares[i].style.backgroundImage = '';
+        }
+
+        const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
+        const isFirstRow = firstRow.includes(i);
+        if (isFirstRow && squares[i]?.style.backgroundImage === '') {
+            let randomImage = Math.floor(Math.random() * tilesImages.length);
+            squares[i].style.backgroundImage = tilesImages[randomImage]
+        }
     }
 };
 
 const updateTiles = (idx, t = 1) => {
+    if (!squares[idx]) {
+        return ;
+    }
     squares[idx].style.backgroundImage = '';
     squares[idx].style.opacity = 1;
-    if (squares[idx].style.filter !== 'saturate(1)') {
+    if (squares[idx]?.style.filter !== 'saturate(1)') {
         tiles += t;
         displayTiles.innerHTML = `${tiles} / ${maxTilesScore} - 🗝`;
     }
@@ -87,28 +113,21 @@ const updateScore = (s, arr) => {
 // ------------------------------------------------------
 // js/touchEvents.js
 
-// const touchCancel = (e) => {
-//     // console.log('touchCancel: ', e);
-//     // dragDrop(e);
-//     // dragEnd(e);
-// };
+const touchCancel = (e) => {
+    console.log('touchCancel: ', e);
+};
 
-// const touchEnd = (e) => {
-//     // console.log('touchEnd: ', e);
-//     dragDrop(e);
-//     dragEnd(e);
-// };
+const touchEnd = (e) => {
+    console.log('touchEnd: ', e);
+};
 
-// const touchMove = (e) => {
-//     // console.log('touchMove: ', e);
-//     dragOver(e);
-//     // dragDrop(e);
-// };
+const touchMove = (e) => {
+    console.log('touchMove: ', e);
+};
 
-// const touchStart = (e) => {
-//     // console.log('touchStart: ', e);
-//     dragStart(e);
-// };
+const touchStart = (e) => {
+    console.log('touchStart: ', e);
+};
 
 // ------------------------------------------------------
 // js/dragEvents.js
@@ -118,11 +137,13 @@ const dragStart = (e) => {
     console.debug(id, 'dragStart');
     tileBeingDragged = backgroundImage;
     tileIdBeingDragged = parseInt(id, 10);
+    title.classList.add("shake");
     highlightTiles(0.25);
 };
 
 const dragEnd = (e) => {
     const { target: { id }} = e;
+    console.debug(id, 'dragEnd');
     const validMoves = [
         tileIdBeingDragged - 1,
         tileIdBeingDragged - width,
@@ -130,8 +151,6 @@ const dragEnd = (e) => {
         tileIdBeingDragged + width,
     ];
     const isValid = validMoves.includes(squareIdBeingReplaced);
-
-    // see how to implement moves counter here...
     if (squareIdBeingReplaced && isValid) {
         squareIdBeingReplaced = null;
         moves += 1;
@@ -144,47 +163,52 @@ const dragEnd = (e) => {
     }
     highlightTiles(0.5);
     title.style.opacity = 1;
+    title.classList.remove("shake");
     displayScore.style.opacity = 0.95;
     displayMoves.style.opacity = 0.95;
-    console.debug(id, 'dragEnd');
+    displayTiles.style.opacity = 0.95;
+    for (let i = 0; i < validMoves.length; i += 1) {
+        squares[validMoves[i]]?.classList.remove("shake");
+    }
 };
 
 const dragOver = (e) => {
     const { target: { id }} = e;
+    console.debug(id, 'dragOver');
+
     const randomColor = Math.floor(Math.random() * tilesImages.length);
     const color = bgColors[randomColor]
     grid.style.border = `${color} solid thick`;
     scoreBoard.style.border = `${color} solid thick`;
-    title.style.opacity = 0.75;
-    displayScore.style.opacity = 0.75;
-    displayMoves.style.opacity = 0.95;
+    // title.style.opacity = 0.75;
+    displayScore.style.opacity = 0.5;
+    displayMoves.style.opacity = 0.5;
+    displayTiles.style.opacity = 0.5;
     e.preventDefault();
-    console.debug(id, 'dragOver');
 };
 
 const dragEnter = (e) => {
     const { target: { id }} = e;
+    console.debug(id, 'dragEnter');
     const randomColor = Math.floor(Math.random() * bgColors.length);
     const color = bgColors[randomColor]
     document.body.style.backgroundColor = color;
-    console.debug(id, 'dragEnter');
 };
 
 const dragLeave = (e) => {
     const { target: { id } } = e;
-
+    console.debug(id, 'dragLeave');
     grid.style.border = 'grey solid thick';
     scoreBoard.style.border = 'grey solid thick';
-    console.debug(id, 'dragLeave');
 };
 
 const dragDrop = (e) => {
     const { target: { id, style: { backgroundImage } } } = e;
+    console.debug(id, 'dragDrop');
     tileBeingReplaced = backgroundImage;
     squareIdBeingReplaced = parseInt(id, 10);
     squares[squareIdBeingReplaced].style.backgroundImage = tileBeingDragged;
-    squares[tileIdBeingDragged].style.backgroundImage = tileBeingReplaced; 
-    console.debug(id, 'dragDrop');
+    squares[tileIdBeingDragged].style.backgroundImage = tileBeingReplaced;
 };
 
 // ------------------------------------------------------
@@ -202,10 +226,26 @@ const addListeners = () => {
     squares.forEach((s) => s.addEventListener('drop', dragDrop));
 
     // touchEvents
-    // squares.forEach((s) => s.addEventListener('touchcancel', touchCancel));
-    // squares.forEach((s) => s.addEventListener('touchend', touchEnd));
-    // squares.forEach((s) => s.addEventListener('touchmove', touchMove));
-    // squares.forEach((s) => s.addEventListener('touchstart', touchStart));
+    squares.forEach((s) => s.addEventListener('touchcancel', touchCancel));
+    squares.forEach((s) => s.addEventListener('touchend', touchEnd));
+    squares.forEach((s) => s.addEventListener('touchmove', touchMove));
+    squares.forEach((s) => s.addEventListener('touchstart', touchStart));
+};
+
+const removeListeners = () => {
+    // dragEvents
+    squares.forEach((s) => s.removeEventListener('dragstart', dragStart));
+    squares.forEach((s) => s.removeEventListener('dragend', dragEnd));
+    squares.forEach((s) => s.removeEventListener('dragover', dragOver));
+    squares.forEach((s) => s.removeEventListener('dragenter', dragEnter));
+    squares.forEach((s) => s.removeEventListener('dragleave', dragLeave));
+    squares.forEach((s) => s.removeEventListener('drop', dragDrop));
+
+    // touchEvents
+    squares.forEach((s) => s.removeEventListener('touchcancel', touchCancel));
+    squares.forEach((s) => s.removeEventListener('touchend', touchEnd));
+    squares.forEach((s) => s.removeEventListener('touchmove', touchMove));
+    squares.forEach((s) => s.removeEventListener('touchstart', touchStart));
 };
 
 // ------------------------------------------------------
@@ -219,7 +259,17 @@ const possibleScores = [
         getArrayByScore: (i, s) => ([i, (i + 1), (i + 2), (i + 3)]),
         // getNumTiles: () => 60,
         getNumTiles: (size, total, width) => total - size,
-        notValid: [5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53, 54, 55],
+        // last three of each row
+        notValid: [
+            ...[5, 6, 7], 
+            ...[13, 14, 15],
+            ...[21, 22, 23],
+            ...[29, 30, 31],
+            ...[37, 38, 39],
+            ...[45, 46, 47],
+            ...[53, 54, 55],
+            ...[61, 62, 63],
+        ],
     },
     {
         key: 'rowOfThree',
@@ -228,7 +278,17 @@ const possibleScores = [
         getArrayByScore: (i, s) => ([i, (i + 1), (i + 2)]),
         // getNumTiles: () => 61,
         getNumTiles: (size, total, width) => total - size,
-        notValid: [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55],
+        // last two of each row:
+        notValid: [
+            ...[6, 7],
+            ...[14, 15],
+            ...[22, 23],
+            ...[30, 31],
+            ...[38, 39],
+            ...[46, 47],
+            ...[54, 55],
+            ...[62, 63],
+        ],
     },
     {
         key: 'colOfFour',
@@ -244,7 +304,7 @@ const possibleScores = [
         arraySize: 3,
         getArrayByScore: (i, s) => ([i, (i + width), (i + (width * 2))]),
         // getNumTiles: () => 47,
-        getNumTiles: (size, total, width) => total - (width * 2) - 1,
+        getNumTiles: (size, total, width) => total - (width * 2),
     },
 ];
 
@@ -265,29 +325,12 @@ const checkScore = ({
             continue;
         }
         const arrayByScore = getArrayByScore(i, s);
-        const decidedTile = squares[i].style.backgroundImage;
+        const decidedTile = squares[i]?.style.backgroundImage;
         const isBlank = decidedTile === '';
         const tileMatch = arrayByScore.every((idx) => 
-            (squares[idx].style.backgroundImage === decidedTile && !isBlank));
+            (squares[idx]?.style.backgroundImage === decidedTile && !isBlank));
         if (tileMatch) {
            updateScore(s, arrayByScore);
-        }
-    }
-};
-
-const moveTilesDown = () => {
-    const moveDown = (totalTiles) - 9; // 55
-    for (let i = 0; i < moveDown; i += 1) {
-        if (squares[i + width].style.backgroundImage === '') {
-            squares[i + width].style.backgroundImage = squares[i].style.backgroundImage;
-            squares[i].style.backgroundImage = '';
-        }
-
-        const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
-        const isFirstRow = firstRow.includes(i);
-        if (isFirstRow && squares[i].style.backgroundImage === '') {
-            let randomImage = Math.floor(Math.random() * tilesImages.length);
-            squares[i].style.backgroundImage = tilesImages[randomImage]
         }
     }
 };
@@ -320,8 +363,8 @@ const setup = () => {
 
 const runFrame = () => {
     try {
-        moveTilesDown();
         possibleScores.map((score) => checkScore(score));
+        moveTilesDown();
     } catch (error) {
         console.error(error);
         return false;
@@ -345,7 +388,7 @@ const runGame = () => {
         run();
         // if (tiles >= totalTiles) {
         if (tiles >= maxTilesScore) {
-            clearInterval(runId);
+            window.clearInterval(runId);
             window.alert('You are winner!! 🎉 🏆');
             window.location.href = 'https://github.com/jraleman/CrunchyChests'
         }
@@ -357,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isSetup = setup();
 
     if (!isSetup) {
-        console.debug('Failed to initialize game!');
+        console.log('Failed to initialize game!');
         return ;
     }
     runGame();
