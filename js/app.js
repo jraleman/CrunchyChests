@@ -4,6 +4,7 @@ const maxTilesScore = 42;
 const squares = [];
 const title = document.querySelector('h2');
 const grid = document.querySelector('.grid');
+const scoreBoard = document.querySelector('.score-board-items');
 const displayScore = document.getElementById('score'); // 💰
 const displayTiles = document.getElementById('tiles'); // 🗝
 const displayMoves = document.getElementById('moves'); // 🧠
@@ -127,6 +128,7 @@ const dragOver = (e) => {
     const randomColor = Math.floor(Math.random() * tilesImages.length);
     const color = bgColors[randomColor]
     grid.style.border = `${color} solid thick`;
+    scoreBoard.style.border = `${color} solid thick`;
     title.style.opacity = 0.75;
     displayScore.style.opacity = 0.75;
     displayMoves.style.opacity = 0.95;
@@ -146,6 +148,7 @@ const dragLeave = (e) => {
     const { target: { id } } = e;
 
     grid.style.border = 'grey solid thick';
+    scoreBoard.style.border = 'grey solid thick';
     console.debug(id, 'dragLeave');
 };
 

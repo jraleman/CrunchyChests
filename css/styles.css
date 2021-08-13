@@ -27,7 +27,7 @@ h2 {
     color: #eee;
     font-size: 72px;
     margin: 0 auto;
-    margin-bottom: 2em;
+    margin-bottom: 0.5em;
     font-family: devinne-swash-shadow;
 }
 
@@ -36,7 +36,7 @@ h2 {
     margin: 0 auto;
 }
 
-.score-board-item {
+.score-board-items {
     text-align: right;
     color: #eee;
     font-size: 32px;
@@ -45,7 +45,7 @@ h2 {
     letter-spacing: 6px;
     opacity: 0.95;
     background: #222;
-    border: white solid 2px;
+    border: grey solid thick;
     border-radius: 1em;
     display: flex;
     justify-content: space-around;
