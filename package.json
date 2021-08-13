@@ -1,0 +1,29 @@
+{
+  "name": "crunchychests",
+  "version": "1.0.0",
+  "description": "Open and crunch all the chests!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jraleman/CrunchyChests.git"
+  },
+  "keywords": [
+    "match3",
+    "JavaScript",
+    "Quasar",
+    "hybrid",
+    "app",
+    "Candy",
+    "Crush",
+    "clone"
+  ],
+  "author": "jraleman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jraleman/CrunchyChests/issues"
+  },
+  "homepage": "https://github.com/jraleman/CrunchyChests#readme"
+}
