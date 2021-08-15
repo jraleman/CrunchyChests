@@ -1,5 +1,6 @@
 {
-  "name": "crunchychests",
+  "name": "com.jraleman.crunchychests",
+  "displayName": "CrunchyChests",
   "version": "1.0.0",
   "description": "Open and crunch all the chests!",
   "main": "index.js",
@@ -25,5 +26,13 @@
   "bugs": {
     "url": "https://github.com/jraleman/CrunchyChests/issues"
   },
-  "homepage": "https://github.com/jraleman/CrunchyChests#readme"
+  "homepage": "https://github.com/jraleman/CrunchyChests#readme",
+  "devDependencies": {
+    "cordova-plugin-whitelist": "^1.3.4"
+  },
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {}
+    }
+  }
 }
