@@ -13,12 +13,12 @@ const bgColors = [
     '#42b284',
 ];
 const tilesImages = [
-    'url(images/red.png)',
-    'url(images/dark.png)',
-    'url(images/green.png)',
-    'url(images/purple.png)',
-    'url(images/white.png)',
-    'url(images/blue.png)',
+    'url(www/img/red.png)',
+    'url(www/img/dark.png)',
+    'url(www/img/green.png)',
+    'url(www/img/purple.png)',
+    'url(www/img/white.png)',
+    'url(www/img/blue.png)',
 ];
 
 // counters
