@@ -12,6 +12,12 @@
         <title>CrunchyChests</title>
     </head>
     <body>
+        <div id="app" >
+            <div class="electron-draggable-window"></div>
+            Current Zoom: <span style="font-weight: bold;" id="current-value"></span>
+            <br />
+            <input type="range" id="zoom" min="1" value="1" max="5" step="1">
+        </div>
         <h2 class="shake-title">CrunchyChests</h2>
         <div class="score-board">
             <div class="score-board-items">
@@ -24,5 +30,6 @@
         <script src="cordova.js"></script>
         <script src="js/DragDropTouch.js"></script>
         <script src="js/app.js"></script>
+        <script src="js/electron.js"></script>
     </body>
 </html>

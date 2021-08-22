@@ -5,6 +5,8 @@
         "resizable": true,
         "webPreferences": {
             "nodeIntegration": true
-        }
+        },
+        "titleBarStyle": "hiddenInset",
+        "transparent": true
     }
 }
