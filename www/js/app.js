@@ -13,12 +13,12 @@ const bgColors = [
     '#42b284',
 ];
 const tilesImages = [
-    'url(www/img/red.png)',
-    'url(www/img/dark.png)',
-    'url(www/img/green.png)',
-    'url(www/img/purple.png)',
-    'url(www/img/white.png)',
-    'url(www/img/blue.png)',
+    'url(./img/red.png)',
+    'url(./img/dark.png)',
+    'url(./img/green.png)',
+    'url(./img/purple.png)',
+    'url(./img/white.png)',
+    'url(./img/blue.png)',
 ];
 
 // counters
@@ -65,24 +65,24 @@ const highlightTiles = (opacity = 1) => {
     ];
     for (let i = 0; i < validMoves.length; i += 1) {
         const tileInRow = (validMoves[i] % 8);
-        if (!tileInRow || squares[validMoves[i]]?.style.opacity === 1) {
+        if (!tileInRow || squares[validMoves[i]] && squares[validMoves[i]].style.opacity === 1) {
             continue;
         }
-        squares[validMoves[i]]?.classList.add("shake");
+        squares[validMoves[i]] && squares[validMoves[i]].classList.add("shake");
     }
 };
 
 const moveTilesDown = () => {
     const moveDown = (totalTiles) - 9; // 55
     for (let i = 0; i < moveDown; i += 1) {
-        if (squares[i + width]?.style.backgroundImage === '') {
+        if (squares[i + width] && squares[i + width].style.backgroundImage === '') {
             squares[i + width].style.backgroundImage = squares[i].style.backgroundImage;
             squares[i].style.backgroundImage = '';
         }
 
         const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
         const isFirstRow = firstRow.includes(i);
-        if (isFirstRow && squares[i]?.style.backgroundImage === '') {
+        if (isFirstRow && squares[i] && squares[i].style.backgroundImage === '') {
             let randomImage = Math.floor(Math.random() * tilesImages.length);
             squares[i].style.backgroundImage = tilesImages[randomImage]
         }
@@ -95,7 +95,7 @@ const updateTiles = (idx, t = 1) => {
     }
     squares[idx].style.backgroundImage = '';
     squares[idx].style.opacity = 1;
-    if (squares[idx]?.style.filter !== 'saturate(1)') {
+    if (squares[idx].style.filter !== 'saturate(1)') {
         tiles += t;
         displayTiles.innerHTML = `${tiles} / ${maxTilesScore} - 🗝`;
     }
@@ -168,7 +168,7 @@ const dragEnd = (e) => {
     displayMoves.style.opacity = 0.95;
     displayTiles.style.opacity = 0.95;
     for (let i = 0; i < validMoves.length; i += 1) {
-        squares[validMoves[i]]?.classList.remove("shake");
+        squares[validMoves[i]] && squares[validMoves[i]].classList.remove("shake");
     }
 };
 
@@ -325,10 +325,10 @@ const checkScore = ({
             continue;
         }
         const arrayByScore = getArrayByScore(i, s);
-        const decidedTile = squares[i]?.style.backgroundImage;
+        const decidedTile = squares[i] ? squares[i].style.backgroundImage : null;
         const isBlank = decidedTile === '';
         const tileMatch = arrayByScore.every((idx) => 
-            (squares[idx]?.style.backgroundImage === decidedTile && !isBlank));
+            (squares[idx] && squares[idx].style.backgroundImage === decidedTile && !isBlank));
         if (tileMatch) {
            updateScore(s, arrayByScore);
         }
