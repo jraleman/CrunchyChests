@@ -38,7 +38,6 @@ const displayScore = document.getElementById('score'); // 💰
 const displayTiles = document.getElementById('tiles'); // 🗝
 const displayMoves = document.getElementById('moves'); // 🧠
 
-
 // ------------------------------------------------------
 // js/helpers.js
 
@@ -355,12 +354,6 @@ const setup = () => {
     return true;
 };
 
-// TODO: use async/await && drag events to run possibleScores
-// run moveTilesDown to update tiles only
-
-// TODO: fix issue of last tile (bottom-right) corner not working
-// this means that (tiles < totalTiles) will always be true
-
 const runFrame = () => {
     try {
         possibleScores.map((score) => checkScore(score));
@@ -389,7 +382,7 @@ const runGame = () => {
         if (tiles >= maxTilesScore) {
             window.clearInterval(runId);
             window.alert('You are winner!! 🎉 🏆');
-            window.location.href = 'https://github.com/jraleman/CrunchyChests'
+            window.location.href = 'https://github.com/jraleman/CrunchyChests'; // <- browser only!
         }
     }, cycleTime);
     return true;
