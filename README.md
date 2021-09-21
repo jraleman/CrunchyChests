@@ -9,3 +9,12 @@
     <source src="https://user-images.githubusercontent.com/11222980/129303025-9ba4b8fd-e397-4d1a-9856-6c75b1438a1e.mp4" type="video/mp4">
   </video>
 </figure>
+
+## TODO
+
+- [ ] 4 lives (♥)
+	- [ ] if you don’t get a point in a turn, you lose one
+- [ ] cheat codes to:
+	- [ ] unlock more (7) lives
+	- [ ] up to 7 in a row/column
+- [ ] add sound effects
